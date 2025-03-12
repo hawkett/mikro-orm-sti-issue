@@ -1,13 +1,46 @@
-# MikroORM reproduction example
+# Overview
 
-This repository serves as a base reproduction example, it contains basic setup with MikroORM 6 with SQLite driver and jest. This is what the main repository is using, and therefore allows for a simple integration to the codebase.
+`demo-issue.test.ts` contains a single test that attempts to open and close 3 orm instances, but eventualy hangs on the third instance, seemingly due to an exponential slowdown in STI initialization over sucessive orm instances, potentially caused by global state pollution of some sort.
 
-## Few hints for creating your own reproductions
+Note that `demo-issue.test.ts` demonstrates the issue by *sequentially creating and closing* three orm instances connecting to the *same* database. The original issue was encountered while attempting to create multiple *concurrent* orm instances connecting to *different* databases using the same schema. Example of concurrent usage would be reading from one database and then writing to another where the databases have the *same schema*.
 
-- Focus on reproducing one problem at a time.
-- Set up the data, the test needs to be **self-contained**.
-- Don't use the CLI, do everything programmatically as part of the test.
-- Remove everything unrelated, keep things as simple as possible.
-- Duplication in tests is fine, better than complex abstractions.
-- Comments are fine, asserts are better!
-- If the problem is not driver specific, use in-memory SQLite database.
+`example.test.ts` shows that the same tests work fine when using the same orm instance to execute the three tests.
+
+Schema consists of three entities in an inheritance chain with somewhat complex releationships. This appears to be the minimal structure to demonstrate the issue.
+
+`BaseEntity <- MidEntity <- ParentEntity`
+
+A similar (simpler) exmaple of this type of data structure is a filesystem where directories are files (inheritance) that contain files (and therefore also directories). The addition of the MidEntity adds complexity with a M-M relationship.
+
+## Notes
+
+```
+npm install
+npm run test
+```
+
+This will run `demo-issue.test.ts`, which is a single test that hangs due to an exponential slowdown in STI initialization over sucessive orm instances, potentially caused by global state pollution of some sort.
+
+Key log lines:
+
+*orm1*
+
+```
+[DEBUG] First ORM closed - Total time: 0.05s
+```
+
+*orm2*
+- property and relationship comparison is versus orm1, and demonstrates potential pollution.
+- total execution time is *much* longer (> 200x) for the same test as orm1
+```
+MidEntity: +2 properties (BaseEntity_items__inverse, ParentEntity_items__inverse)
+MidEntity: +2 relationships
+ParentEntity: +2 properties (BaseEntity_items__inverse, ParentEntity_items__inverse)
+ParentEntity: +2 relationships
+[DEBUG] Second ORM closed - Total time: 11.60s
+```
+
+*orm3*
+```
+<Does not complete discovery in reasonable time>
+```
