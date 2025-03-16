@@ -1,6 +1,5 @@
 import { MikroORM, EntitySchema } from '@mikro-orm/core';
 import { SqliteDriver } from '@mikro-orm/sqlite';
-import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 import { BaseEntity, BaseSchema, MidSchema, ParentSchema } from './schema';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
@@ -97,10 +96,8 @@ async function initializeSqliteOrm(
       discovery: {
         warnWhenNoEntities: true,
         requireEntitiesArray: true,
-        alwaysAnalyseProperties: false,
-        disableDynamicFileAccess: true
+        alwaysAnalyseProperties: false
       },
-      metadataProvider: TsMorphMetadataProvider,
       metadataCache: {
         enabled: false
       }

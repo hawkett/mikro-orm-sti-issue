@@ -32,7 +32,6 @@ export class ParentEntity extends MidEntity {
 
 // Base schema with STI support
 export const BaseSchema = new EntitySchema<BaseEntity>({
-  name: 'BaseEntity',
   class: BaseEntity,
   discriminatorColumn: 'type',
   discriminatorValue: 'base',
@@ -52,7 +51,6 @@ export const BaseSchema = new EntitySchema<BaseEntity>({
 
 // MidEntity schema extending BaseSchema
 export const MidSchema = new EntitySchema<MidEntity, BaseEntity>({
-  name: 'MidEntity',
   class: MidEntity,
   extends: BaseSchema,
   discriminatorValue: 'mid',
@@ -80,7 +78,6 @@ export const MidSchema = new EntitySchema<MidEntity, BaseEntity>({
 
 // ParentEntity schema extending MidSchema
 export const ParentSchema = new EntitySchema<ParentEntity, MidEntity>({
-  name: 'ParentEntity',
   class: ParentEntity,
   extends: MidSchema,
   discriminatorValue: 'parent',
