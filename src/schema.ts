@@ -30,6 +30,10 @@ export class ParentEntity extends MidEntity {
   elements = new Collection<BaseEntity>(this);
 }
 
+export class BossEntity extends ParentEntity {
+  description?: string;
+}
+
 // Base schema with STI support
 export const BaseSchema = new EntitySchema<BaseEntity>({
   class: BaseEntity,
@@ -87,5 +91,14 @@ export const ParentSchema = new EntitySchema<ParentEntity, MidEntity>({
       entity: () => 'BaseEntity',
       mappedBy: 'parent'
     }
+  }
+});
+
+export const BossSchema = new EntitySchema<BossEntity, ParentEntity>({
+  class: BossEntity,
+  extends: ParentSchema,
+  discriminatorValue: 'parent',
+  properties: {
+    description: { type: 'string' },
   }
 });

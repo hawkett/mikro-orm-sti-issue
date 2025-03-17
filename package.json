@@ -5,7 +5,8 @@
   "scripts": {
     "build": "tsc",
     "start": "jest",
-    "test": "jest src/demo-issue.test.ts"
+    "test": "jest src/demo-issue.test.ts",
+    "test:state": "jest src/state-pollution.test.ts"
   },
   "author": "Colin Hawkett",
   "dependencies": {
