@@ -97,7 +97,7 @@ export const ParentSchema = new EntitySchema<ParentEntity, MidEntity>({
 export const BossSchema = new EntitySchema<BossEntity, ParentEntity>({
   class: BossEntity,
   extends: ParentSchema,
-  discriminatorValue: 'parent',
+  discriminatorValue: 'boss',
   properties: {
     description: { type: 'string' },
   }
